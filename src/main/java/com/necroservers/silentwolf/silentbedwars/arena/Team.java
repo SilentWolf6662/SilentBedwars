@@ -12,28 +12,32 @@ import java.util.List;
 
 @Getter
 public class Team {
-    private final String name;
+    private final String color;
+    private final String colorCode; // §c, §9, etc.
     private final List<Player> players = new ArrayList<>();
     private final Level level;
     private final Vector3 spawn;
+    private final double spawnYaw;
     private final Vector3 bed;
     private boolean bedAlive = true;
 
-    public Team(String name, Level level, double sx, double sy, double sz, double bx, double by, double bz) {
-        this.name = name;
+    public Team(String color, String colorCode, Level level, double sx, double sy, double sz, double bx, double by, double bz) {
+        this.color = color;
+        this.colorCode = colorCode;
         this.level = level;
         this.spawn = new Vector3(sx, sy, sz);
+        this.spawnYaw = 0; // default yaw, can be customized
         this.bed = new Vector3(bx, by, bz);
     }
 
     public void addPlayer(Player player) {
         players.add(player);
-        Location waitingLobby = new Location(53.38, 5.00, -50.48, level);
+        Location waitingLobby = new Location(49.71, 5.00, -39.56, level);
         int chunkX = waitingLobby.getFloorX() >> 4;
         int chunkZ = waitingLobby.getFloorZ() >> 4;
         level.loadChunk(chunkX, chunkZ);
         player.teleport(waitingLobby);
-        player.sendMessage("§aJoined " + name + " Team!");
+        player.sendMessage("§aJoined " + color + " Team!");
     }
 
     public void teleportPlayersToSpawn() {
@@ -42,6 +46,7 @@ public class Team {
             int chunkZ = spawn.getFloorZ() >> 4;
             level.loadChunk(chunkX, chunkZ);  // force load
             p.teleport(spawn);
+            p.setGamemode(Player.SURVIVAL);
         }
     }
 
@@ -62,6 +67,10 @@ public class Team {
     }
 
     public void reset() {
+        for (Player p : players) {
+            p.setGamemode(Player.ADVENTURE);
+            p.teleport(new Location(35.19, 6.00, -46.95, level)); // lobby
+        }
         players.clear();
         bedAlive = true;
     }

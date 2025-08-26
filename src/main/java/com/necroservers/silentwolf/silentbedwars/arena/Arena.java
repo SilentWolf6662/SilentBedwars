@@ -1,13 +1,17 @@
 package com.necroservers.silentwolf.silentbedwars.arena;
 
+import cn.nukkit.IPlayer;
 import cn.nukkit.level.Level;
 import cn.nukkit.Player;
-import cn.nukkit.level.Location;
 import com.necroservers.silentwolf.silentbedwars.BedwarsPlugin;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.necroservers.silentwolf.silentbedwars.game.damage.*;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class Arena {
@@ -18,14 +22,16 @@ public class Arena {
     private GameState state = GameState.WAITING;
     private int countdownTaskId = -1;
 
+    private final Map<UUID, LastHitInfo> lastHits = new ConcurrentHashMap<>();
+
     public Arena(String name, Level level) {
         this.name = name;
         this.level = level;
     }
 
     public void loadDefaultTeams() {
-        teams.put("red", new Team("Red", level, 65.5, 5, -43.5, 65, 5, -49));  // spawn, bed
-        teams.put("blue", new Team("Blue", level, 65.5, 5, -58.5, 65, 5, -52));
+        teams.put("red", new Team("Red", "§c", level, 65.5, 5, -43.5, 65, 5, -49));  // spawn, bed
+        teams.put("blue", new Team("Blue", "§9", level, 65.5, 5, -58.5, 65, 5, -52));
     }
 
     public void addPlayer(Player player) {
@@ -37,9 +43,9 @@ public class Arena {
         }
     }
 
-    private void startCountdown() {
+    public void startCountdown() {
         state = GameState.STARTING;
-        int[] timeLeft = {10}; // 10-second countdown
+        int[] timeLeft = {5}; // 10-second countdown
 
         countdownTaskId = BedwarsPlugin.getInstance().getServer().getScheduler()
                 .scheduleRepeatingTask(BedwarsPlugin.getInstance(), () -> {
@@ -63,7 +69,7 @@ public class Arena {
         // TODO: enable generators, etc.
     }
 
-    private void broadcast(String message) {
+    public void broadcast(String message) {
         for (Team t : teams.values()) {
             for (Player p : t.getPlayers()) {
                 p.sendMessage(message);
@@ -80,13 +86,16 @@ public class Arena {
         if (aliveTeams.size() == 1) {
             Team winner = aliveTeams.getFirst();
             for (Player p : level.getPlayers().values()) {
-                p.sendMessage("§a" + winner.getName() + " Team has won the game!");
+                p.sendMessage("§a" + winner.getColor() + " Team has won the game!");
             }
             reset();
         }
     }
 
     public void reset() {
+        state = GameState.WAITING;
+        lastHits.clear();
+
         for (Team t : teams.values()) {
             t.reset();
         }
@@ -102,5 +111,42 @@ public class Arena {
 
     public int getPlayerCount() {
         return teams.values().stream().mapToInt(t -> t.getPlayers().size()).sum();
+    }
+
+    public void recordHit(@NotNull Player victim, UUID damagerId, DamageCauseType cause) {
+        lastHits.put(victim.getUniqueId(), new LastHitInfo(
+                damagerId,
+                cause,
+                System.currentTimeMillis()
+        ));
+    }
+
+    public LastHitInfo getLastHit(@NotNull Player victim) {
+        LastHitInfo info = lastHits.get(victim.getUniqueId());
+        if (info == null) return null;
+        if (System.currentTimeMillis() - info.getTimestamp() > 10_000) return null; // expire after 10s
+        return info;
+    }
+
+    public String getPlayerName(UUID uuid) {
+        // First try online player
+        Player online = BedwarsPlugin.getInstance().getServer().getPlayer(uuid).orElse(null);
+        if (online != null) {
+            return online.getName();
+        }
+
+        // Fallback: Nukkit's offline player cache
+        return BedwarsPlugin.getInstance().getServer().getOfflinePlayer(uuid).getName();
+    }
+
+    public IPlayer getPlayerOffline(UUID uuid) {
+        // First try online player
+        Player online = BedwarsPlugin.getInstance().getServer().getPlayer(uuid).orElse(null);
+        if (online != null) {
+            return online;
+        }
+
+        // Fallback: Nukkit's offline player cache
+        return BedwarsPlugin.getInstance().getServer().getOfflinePlayer(uuid);
     }
 }
