@@ -1,0 +1,7 @@
+name: SilentBedwars
+main: com.necroservers.silentwolf.silentbedwars.BedwarsPlugin
+version: "1.0.0"
+api: "2.0.0"
+load: POSTWORLD
+author: silentwolf_666
+description: Bedwars plugin for PowerNukkitX

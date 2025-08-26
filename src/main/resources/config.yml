@@ -1,0 +1,52 @@
+# max players per team unless overridden per arena
+defaultTeamSize: 4
+
+# lobby world and spawn (fallback)
+lobby:
+  level: "world"
+  x: 0.5
+  y: 65.0
+  z: 0.5
+  yaw: 0.0
+  pitch: 0.0
+
+# arenas are persisted here by setup commands
+arenas:
+  forest:
+    world: "world"
+    teamSize: 4
+    teams:
+      red:
+        spawn: [65.52, 5.00, -43.49, 90.0, 0.0]   # x, y, z, yaw, pitch
+        bed: [65.50, 5.00, -49.46]
+      blue:
+        spawn: [65.47, 5.00, -58.43, -90.0, 0.0]
+        bed: [65.47, 5.00, -52.55]
+    generators:
+      iron:
+        - [60.45, 5.00, -51.42]
+        - [70.50, 5.00, -50.53]
+      emerald:
+        - [60.47, 5.00, -46.43]
+        - [70.41, 5.00, -55.55]
+storage:
+  # Storage type: "json", "sqlite" or "mysql"
+  type: "json"
+
+  # Only used if type = "json"
+  json:
+    file: "plugins/SilentBedwars/elo_leaderboard.json"
+
+  # Only used if type = "sqlite"
+  # Example for SQLite
+  sqlite:
+    file: "plugins/SilentBedwars/leaderboard.db"
+
+  # Only used if type = "mysql"
+  # Example for MySQL
+  mysql:
+    host: "localhost" # Change this to your MySQL host
+    port: 3306 # Change this to your MySQL host and port
+    database: "silentbedwars" # Change this to your MySQL database name
+    user: "root" # Change this to your MySQL username
+    password: "password" # Change this to your MySQL password
