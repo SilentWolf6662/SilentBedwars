@@ -6,10 +6,9 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.math.Vector3;
-import com.necroservers.silentwolf.silentbedwars.BedwarsPlugin;
-import com.necroservers.silentwolf.silentbedwars.arena.Arena;
-import com.necroservers.silentwolf.silentbedwars.arena.GameState;
-import com.necroservers.silentwolf.silentbedwars.arena.Team;
+import com.necroservers.silentwolf.silentbedwars.game.arena.Arena;
+import com.necroservers.silentwolf.silentbedwars.game.arena.GameState;
+import com.necroservers.silentwolf.silentbedwars.game.arena.Team;
 import org.jetbrains.annotations.NotNull;
 
 public class BlockBreakListener implements Listener {

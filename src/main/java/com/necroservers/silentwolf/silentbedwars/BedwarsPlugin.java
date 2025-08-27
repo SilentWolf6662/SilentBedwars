@@ -2,7 +2,7 @@ package com.necroservers.silentwolf.silentbedwars;
 
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
-import com.necroservers.silentwolf.silentbedwars.arena.Arena;
+import com.necroservers.silentwolf.silentbedwars.game.arena.Arena;
 import com.necroservers.silentwolf.silentbedwars.command.BedwarsCommand;
 import com.necroservers.silentwolf.silentbedwars.command.ForceEndCommand;
 import com.necroservers.silentwolf.silentbedwars.command.ForceStartCommand;

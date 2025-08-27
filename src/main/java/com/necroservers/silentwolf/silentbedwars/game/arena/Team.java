@@ -1,4 +1,4 @@
-package com.necroservers.silentwolf.silentbedwars.arena;
+package com.necroservers.silentwolf.silentbedwars.game.arena;
 
 import cn.nukkit.Player;
 import cn.nukkit.level.Level;
@@ -19,15 +19,17 @@ public class Team {
     private final Vector3 spawn;
     private final double spawnYaw;
     private final Vector3 bed;
+    private final Vector3 generator;
     private boolean bedAlive = true;
 
-    public Team(String color, String colorCode, Level level, double sx, double sy, double sz, double bx, double by, double bz) {
+    public Team(String color, String colorCode, Level level, double sx, double sy, double sz, double bx, double by, double bz, double gx, double gy, double gz) {
         this.color = color;
         this.colorCode = colorCode;
         this.level = level;
         this.spawn = new Vector3(sx, sy, sz);
         this.spawnYaw = 0; // default yaw, can be customized
         this.bed = new Vector3(bx, by, bz);
+        this.generator = new Vector3(gx, gy, gz);
     }
 
     public void addPlayer(Player player) {
@@ -37,11 +39,13 @@ public class Team {
         int chunkZ = waitingLobby.getFloorZ() >> 4;
         level.loadChunk(chunkX, chunkZ);
         player.teleport(waitingLobby);
+        player.getInventory().clearAll();
         player.sendMessage("§aJoined " + color + " Team!");
     }
 
     public void teleportPlayersToSpawn() {
         for (Player p : players) {
+            p.getInventory().clearAll();
             int chunkX = spawn.getFloorX() >> 4;
             int chunkZ = spawn.getFloorZ() >> 4;
             level.loadChunk(chunkX, chunkZ);  // force load
@@ -69,6 +73,7 @@ public class Team {
     public void reset() {
         for (Player p : players) {
             p.setGamemode(Player.ADVENTURE);
+            p.getInventory().clearAll();
             p.teleport(new Location(35.19, 6.00, -46.95, level)); // lobby
         }
         players.clear();

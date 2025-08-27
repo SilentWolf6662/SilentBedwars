@@ -3,7 +3,7 @@ package com.necroservers.silentwolf.silentbedwars.command;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.Player;
-import com.necroservers.silentwolf.silentbedwars.arena.Arena;
+import com.necroservers.silentwolf.silentbedwars.game.arena.Arena;
 
 public class BedwarsCommand extends Command {
 

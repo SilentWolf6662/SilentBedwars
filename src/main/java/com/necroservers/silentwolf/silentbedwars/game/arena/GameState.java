@@ -1,4 +1,4 @@
-package com.necroservers.silentwolf.silentbedwars.arena;
+package com.necroservers.silentwolf.silentbedwars.game.arena;
 
 
 public enum GameState {

@@ -3,8 +3,8 @@ package com.necroservers.silentwolf.silentbedwars.command;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import com.necroservers.silentwolf.silentbedwars.BedwarsPlugin;
-import com.necroservers.silentwolf.silentbedwars.arena.Arena;
-import com.necroservers.silentwolf.silentbedwars.arena.GameState;
+import com.necroservers.silentwolf.silentbedwars.game.arena.Arena;
+import com.necroservers.silentwolf.silentbedwars.game.arena.GameState;
 
 public class ForceEndCommand extends Command {
 

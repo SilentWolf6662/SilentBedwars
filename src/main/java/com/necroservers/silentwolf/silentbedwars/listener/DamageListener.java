@@ -13,9 +13,9 @@ import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.types.SpawnPointType;
 import com.necroservers.silentwolf.silentbedwars.BedwarsPlugin;
-import com.necroservers.silentwolf.silentbedwars.arena.Arena;
-import com.necroservers.silentwolf.silentbedwars.arena.GameState;
-import com.necroservers.silentwolf.silentbedwars.arena.Team;
+import com.necroservers.silentwolf.silentbedwars.game.arena.Arena;
+import com.necroservers.silentwolf.silentbedwars.game.arena.GameState;
+import com.necroservers.silentwolf.silentbedwars.game.arena.Team;
 import com.necroservers.silentwolf.silentbedwars.game.damage.DamageCauseType;
 import com.necroservers.silentwolf.silentbedwars.game.damage.LastHitInfo;
 import com.necroservers.silentwolf.silentbedwars.util.TeamColor;
@@ -71,7 +71,7 @@ public class DamageListener implements Listener {
             spawn.setStrong();
             player.teleport(spawn);
             player.setGamemode(Player.SURVIVAL);
-        }, 1); // 1 tick later
+        }, 20 * 5); // 1 tick later
     }
 
 

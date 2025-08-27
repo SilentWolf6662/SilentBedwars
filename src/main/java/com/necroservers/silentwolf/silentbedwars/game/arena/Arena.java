@@ -1,9 +1,16 @@
-package com.necroservers.silentwolf.silentbedwars.arena;
+package com.necroservers.silentwolf.silentbedwars.game.arena;
 
 import cn.nukkit.IPlayer;
+import cn.nukkit.Server;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.Player;
+import cn.nukkit.math.Vector3;
 import com.necroservers.silentwolf.silentbedwars.BedwarsPlugin;
+import com.necroservers.silentwolf.silentbedwars.game.generator.Generator;
+import com.necroservers.silentwolf.silentbedwars.game.generator.GeneratorManager;
+import com.necroservers.silentwolf.silentbedwars.game.generator.ItemGenerator;
+import com.necroservers.silentwolf.silentbedwars.game.generator.TeamGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +27,7 @@ public class Arena {
     private final Map<String, Team> teams = new HashMap<>();
     @Setter @Getter
     private GameState state = GameState.WAITING;
+    private final GeneratorManager generatorManager = new GeneratorManager();
     private int countdownTaskId = -1;
 
     private final Map<UUID, LastHitInfo> lastHits = new ConcurrentHashMap<>();
@@ -30,8 +38,8 @@ public class Arena {
     }
 
     public void loadDefaultTeams() {
-        teams.put("red", new Team("Red", "§c", level, 65.5, 5, -43.5, 65, 5, -49));  // spawn, bed
-        teams.put("blue", new Team("Blue", "§9", level, 65.5, 5, -58.5, 65, 5, -52));
+        teams.put("red", new Team("Red", "§c", level, 65.5, 5, -43.5, 65, 5, -49, 65.5, 5, -43.5));  // spawn, bed
+        teams.put("blue", new Team("Blue", "§9", level, 65.5, 5, -58.5, 65, 5, -52, 65.5, 5, -58.5));
     }
 
     public void addPlayer(Player player) {
@@ -67,6 +75,32 @@ public class Arena {
             t.teleportPlayersToSpawn();
         }
         // TODO: enable generators, etc.
+
+        generatorSetup();
+
+        BedwarsPlugin.getInstance().getServer().getScheduler().scheduleRepeatingTask(BedwarsPlugin.getInstance(), () -> {
+            generatorManager.tickAll(Server.getInstance().getTick());
+        }, 1);
+    }
+
+    private void generatorSetup() {
+        Generator gen = new ItemGenerator("diamond", level, new Vector3(70.48, 5.00, -48.51), 20 * 5, Item.DIAMOND, 5);
+        Generator gen1 = new ItemGenerator("diamond2", level, new Vector3(60.71, 5.00, -51.48), 20 * 5, Item.DIAMOND, 5);
+        Generator gen2 = new ItemGenerator("emerald", level, new Vector3(60.55, 5.00, -46.49), 20 * 10, Item.EMERALD, 2);
+        Generator gen3 = new ItemGenerator("emerald2", level, new Vector3(70.20, 5.00, -55.48), 20 * 10, Item.EMERALD, 2);
+
+        generatorManager.addGenerator(gen);
+        generatorManager.addGenerator(gen1);
+        generatorManager.addGenerator(gen2);
+        generatorManager.addGenerator(gen3);
+
+        for (Team t : teams.values()) {
+            Vector3 genCoords = t.getGenerator();
+            TeamGenerator teamGen = new TeamGenerator(t.getColor().toLowerCase(), level, genCoords);
+            teamGen.addItem(Item.get(Item.IRON_INGOT, 0, 1), 20, 30); // every second
+            teamGen.addItem(Item.get(Item.GOLD_INGOT, 0, 1), 60, 20); // every 3 seconds
+            generatorManager.addGenerator(teamGen);
+        }
     }
 
     public void broadcast(String message) {
@@ -95,6 +129,7 @@ public class Arena {
     public void reset() {
         state = GameState.WAITING;
         lastHits.clear();
+        generatorManager.clear();
 
         for (Team t : teams.values()) {
             t.reset();

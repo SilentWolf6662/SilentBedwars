@@ -1,6 +1,6 @@
 package com.necroservers.silentwolf.silentbedwars.util;
 
-import com.necroservers.silentwolf.silentbedwars.arena.Team;
+import com.necroservers.silentwolf.silentbedwars.game.arena.Team;
 import org.jetbrains.annotations.NotNull;
 
 public class TeamColor {
